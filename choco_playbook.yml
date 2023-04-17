@@ -1,0 +1,17 @@
+---
+- hosts: all
+  tasks:
+  - name: Run shell
+    win_shell: |
+        choco install adobereader -y
+        choco install notepadplusplus -y
+        choco install atom -y
+        choco list --local-only > choco_output.txt
+        Get-Content software_list.txt | Compare-Object -DifferenceObject choco_output.txt -PassThru
+        Remove-Item choco_output.txt
+    register: shell_output
+
+  - name: View shell output
+    debug:
+      var: shell_output.stdout_lines
+
