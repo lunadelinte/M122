@@ -1,14 +1,6 @@
 Set-ExecutionPolicy RemoteSigned
 
-
-    function Set-TaskbarTransparency {
-        param (
-            [bool]$Transparency # $true = Transparent, $false = Opaque
-        )
-        Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'UseOLEDTaskbarTransparency' -Value $Transparency
-    }
-
-    function Set-WindowAnimations {
+function Set-WindowAnimations {
         param (
             [bool]$Enable # $true = Enable, $false = Disable
         )
@@ -66,7 +58,25 @@ function Create-MyDocumentsFolders {
             }
         }
     }
+}
 
+function Create-DesktopShortcuts {
+    $desktopPath = [Environment]::GetFolderPath("Desktop")
+    $documentsPath = [Environment]::GetFolderPath("MyDocuments")
+    $folderNames = @("TBZ", "ÜK", "Sunrise")
+
+    foreach ($folderName in $folderNames) {
+        $sourcePath = Join-Path -Path $documentsPath -ChildPath $folderName
+        $shortcutPath = Join-Path -Path $desktopPath -ChildPath "$folderName.lnk"
+
+        if (-not (Test-Path -Path $shortcutPath)) {
+            $WshShell = New-Object -ComObject WScript.Shell
+            $Shortcut = $WshShell.CreateShortcut($shortcutPath)
+            $Shortcut.TargetPath = $sourcePath
+            $Shortcut.Save()
+        }
+    }
+}
 
 
 
@@ -76,8 +86,6 @@ function Create-MyDocumentsFolders {
 # Set Execution Policy
 Set-ExecutionPolicy RemoteSigned
 
-# Set Taskbar Transparency to Transparent
-Set-TaskbarTransparency -Transparency $true
 
 # Enable Window Animations
 Set-WindowAnimations -Enable $true
@@ -85,6 +93,8 @@ Set-WindowAnimations -Enable $true
 # Create My Documents Folders "Schule", "ÜK", and "Sunrise"
 Create-MyDocumentsFolders
 
+# Create Desktop Shortcuts for "TBZ", "ÜK", and "Sunrise"
+Create-DesktopShortcuts
 
 
 
