@@ -4,11 +4,5 @@
   gather_facts: false
 
   tasks:
-    - name: Copy PowerShell script to Windows host
-      win_copy:
-        src: invoke_powershell.ps1
-        dest: C:\temp\script.ps1
-
-    - name: Execute PowerShell script
       win_shell: powershell.exe C:\temp\script.ps1
 
